@@ -14,7 +14,6 @@ export async function formatTextWithAI({
   rawText,
 }: AIFormatConfig): Promise<string> {
   
-  // This strict instruction set teaches the AI to build a Notion "OS" Blueprint style
   const systemPrompt = `You are a world-class Business Architect and UI Designer. 
   Your goal is to transform raw business notes into an elegant, high-impact "Notion OS Blueprint" or "Operating System Dashboard" using clean HTML.
 
@@ -45,13 +44,33 @@ export async function formatTextWithAI({
       throw new Error('Please enter your free Gemini API Key in the settings panel.');
     }
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
 
-    const result = await model.generateContent([
-      { text: `${systemPrompt}\n\nRaw draft to blueprint:\n${rawText}` },
-    ]);
-    const response = await result.response;
-    return response.text().trim();
+    // TRY THE NEW PRIMARY MODEL FIRST (gemini-3.5-flash)
+    try {
+      const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
+      const result = await model.generateContent([
+        { text: `${systemPrompt}\n\nRaw draft to blueprint:\n${rawText}` },
+      ]);
+      const response = await result.response;
+      return response.text().trim();
+    } catch (primaryError: any) {
+      console.warn("Primary AI model (3.5) is currently busy. Attempting fallback model (2.5)...", primaryError);
+      
+      // SILENT FALLBACK TO STABLE MODEL (gemini-2.5-flash)
+      try {
+        const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        const result = await fallbackModel.generateContent([
+          { text: `${systemPrompt}\n\nRaw draft to blueprint:\n${rawText}` },
+        ]);
+        const response = await result.response;
+        return response.text().trim();
+      } catch (fallbackError: any) {
+        // FRIENDLY WARNING IF BOTH SERVERS ARE TEMPORARILY BUSY
+        throw new Error(
+          "Google's free servers are currently experiencing very high demand. Please wait 15-30 seconds and click 'Beautify' again!"
+        );
+      }
+    }
   } else {
     try {
       const response = await fetch(`${ollamaEndpoint}/api/generate`, {
