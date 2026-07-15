@@ -27,7 +27,7 @@ export async function formatTextWithAI({
       throw new Error('Please provide your free Gemini API Key in the settings panel.');
     }
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
 
     const result = await model.generateContent([
       { text: `${systemPrompt}\n\nRaw text to analyze:\n${rawText}` },
