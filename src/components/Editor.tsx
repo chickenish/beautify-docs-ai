@@ -41,8 +41,8 @@ export default function Editor({ content, onChange }: EditorProps) {
   }
 
   return (
-    <div className="w-full h-full min-h-[400px] border border-gray-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-950 text-foreground p-4 shadow-sm relative">
-      <div className="flex flex-wrap gap-2 mb-4 border-b border-gray-100 dark:border-zinc-800 pb-2 text-xs text-muted-foreground">
+    <div className="w-full h-full min-h-[400px] border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-950 text-foreground p-4 shadow-sm relative">
+      <div className="flex flex-wrap gap-2 mb-4 border-b border-zinc-100 dark:border-zinc-800 pb-2 text-xs text-muted-foreground">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`p-1.5 px-3 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 ${editor.isActive('bold') ? 'bg-zinc-100 dark:bg-zinc-800 font-bold' : ''}`}
@@ -68,7 +68,10 @@ export default function Editor({ content, onChange }: EditorProps) {
           Bullet List
         </button>
       </div>
-      <EditorContent editor={editor} className="prose dark:prose-invert max-w-none min-h-[300px] focus:outline-none" />
+      <EditorContent 
+        editor={editor} 
+        className="prose dark:prose-invert max-w-none min-h-[300px] focus:outline-none prose-headings:font-bold prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-table:w-full prose-th:border-b prose-th:pb-2 prose-td:py-2" 
+      />
     </div>
   );
 }
